@@ -1,23 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { io } from "socket.io-client"
+
+const socket = io(process.env.REACT_APP_SERVER);
+
+socket.on('Handshake', ()=>{
+  console.log('hit!')
+})
 
 function App() {
+
+  const [hello, setHello] = useState('Default message');
+  const fetch = async () => {
+    let response = await axios.get(process.env.REACT_APP_SERVER);
+    setHello(response.data);
+  }
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>{hello}</h1>
     </div>
   );
 }
